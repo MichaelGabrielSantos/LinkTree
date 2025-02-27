@@ -6,14 +6,14 @@ import {
   LucideGithub,
 } from "lucide-react";
 import foto from "@/assets/perfil.jpg";
+import {  Phone } from "lucide-react";
 
 interface ProfileCardProps {
   darkMode: boolean;
 }
 
-export default function ProfileCard({
-  darkMode,
-}: ProfileCardProps) {
+export default function ProfileCard({ darkMode }: ProfileCardProps) {
+  const phoneNumber = "5511973944686";
   return (
     <div className={`flex flex-col items-center h-auto px-8 w-full`}>
       <div
@@ -40,17 +40,38 @@ export default function ProfileCard({
         </div>
 
         <div className="flex justify-center space-x-6">
-          <a href="https://www.instagram.com/maicoding/" className="hover:text-gray-400">
+          <a
+            href="https://www.instagram.com/maicoding/"
+            className="hover:text-gray-400"
+          >
             <LucideInstagram />
           </a>
-          <a href="https://www.linkedin.com/in/michael-gabriel-santos/" className="hover:text-gray-400">
+          <a
+            href="https://www.linkedin.com/in/michael-gabriel-santos/"
+            className="hover:text-gray-400"
+          >
             <LucideLinkedin />
           </a>
-          <a href="mailto:michaelgabrielsantos@outlook.com" className="hover:text-gray-400">
+          <a
+            href="mailto:michaelgabrielsantos@outlook.com?subject=Contato&body=Olá, tudo bem? vim pela central de links"
+            className="hover:text-gray-400"
+          >
             <LucideMail />
           </a>
-          <a href="https://github.com/MichaelGabrielSantos" className="hover:text-gray-400">
+          <a
+            href="https://github.com/MichaelGabrielSantos"
+            className="hover:text-gray-400"
+          >
             <LucideGithub />
+          </a>
+          {/* Botão de WhatsApp */}
+          <a
+            href={`https://wa.me/${phoneNumber}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-400"
+          >
+            <Phone />
           </a>
         </div>
       </div>

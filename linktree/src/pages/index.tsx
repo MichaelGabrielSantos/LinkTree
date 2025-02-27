@@ -31,6 +31,16 @@ export default function Home2() {
   const [hasScrolled, setHasScrolled] = useState(false);
   const [showContactButton, setShowContactButton] = useState(false);
 
+  const phoneNumber = "5511973944686";
+
+  // Detectar o dark mode do sistema automaticamente
+  useEffect(() => {
+    const systemPrefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    setDarkMode(systemPrefersDark);
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -116,27 +126,43 @@ export default function Home2() {
         </motion.div>
 
         {/* Botão de contato - Só aparece após 100px de scroll */}
-        <motion.button
-          initial={{ opacity: 0, y: 20 }}
-          animate={showContactButton ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.5 }}
-          className={`fixed bottom-10 left-[5%] -translate-x-1/2 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 w-[90%] shadow-[rgba(0,0,0,0.30)_-4px_4px_0px_2px] ${
-            darkMode ? "bg-bgCardDark" : "bg-bgCardLight"
-          }`}
-          style={{ display: showContactButton ? "block" : "none" }}
+        <motion.a
+          href={`https://wa.me/${phoneNumber}`}
+          target="_blank"
+          rel="noopener noreferrer"
         >
-          Entrar em Contato
-        </motion.button>
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={
+              showContactButton ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+            }
+            transition={{ duration: 0.5 }}
+            className={`fixed bottom-10 left-[5%] -translate-x-1/2 text-white px-6 py-3 rounded-full shadow-lg hover:bg-gray-700 w-[90%] shadow-[rgba(0,0,0,0.30)_-4px_4px_0px_2px] ${
+              darkMode ? "bg-bgCardDark" : "bg-bgCardLight"
+            }`}
+            style={{ display: showContactButton ? "block" : "none" }}
+          >
+            Entrar em Contato
+          </motion.button>
+        </motion.a>
       </main>
 
-      <footer className="flex gap-6 flex-wrap items-center justify-center p-4 mt-10">
+      <footer className="flex gap-6 flex-wrap items-center justify-center p-4 mt-10 flex-col">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          © {new Date().getFullYear()} - Meu Portfólio 🚀
+          © {new Date().getFullYear()} - Central de Links 🚀 <br />
         </motion.p>
+        <a
+          className="text-sky-800 font-lg underline decoration-solid"
+          href={`https://wa.me/${phoneNumber}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Criar minha central de links
+        </a>
       </footer>
     </div>
   );
