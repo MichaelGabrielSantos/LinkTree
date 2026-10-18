@@ -8,6 +8,9 @@ import { getProposition } from "@/server/queries/proposition";
 import { ensurePropositionText } from "@/server/connectors/camara/texts";
 import { withTimeout } from "@/lib/async";
 
+// Chamada ao modelo pode levar dezenas de segundos; 60 s é o máximo do plano Hobby.
+export const maxDuration = 60;
+
 const Body = z.object({
   subject: z.enum(["news", "proposition"]),
   id: z.string().uuid(),
@@ -33,7 +36,7 @@ export async function POST(req: Request) {
   if (!view) return NextResponse.json({ error: "Proposição não encontrada" }, { status: 404 });
   // Tenta obter o inteiro teor antes de explicar; se falhar, a explicação avisa que só há ementa.
   try {
-    await withTimeout(ensurePropositionText(id), 25_000);
+    await withTimeout(ensurePropositionText(id), 10_000);
     view = (await getProposition(id))!;
   } catch {
     /* segue com o que houver */

@@ -5,6 +5,9 @@ import { consumeRateLimit } from "@/server/ai/budget";
 import { getCurrentUser } from "@/server/auth";
 import { appendConversation } from "@/server/user-data";
 
+// Chamada ao modelo pode levar dezenas de segundos; 60 s é o máximo do plano Hobby.
+export const maxDuration = 60;
+
 const Body = z.object({
   question: z.string().min(1).max(1000),
   context: z.object({ type: z.enum(["news", "proposition", "person"]), id: z.string().uuid() }).nullable(),

@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
 import { isJobName, JOBS } from "@/server/ingestion/jobs";
 
-export const maxDuration = 300;
+// Limite do plano Hobby da Vercel (1–60 s). Jobs pesados rodam pela CLI.
+export const maxDuration = 60;
 
 function authorized(req: Request) {
   const secret = process.env.CRON_SECRET;

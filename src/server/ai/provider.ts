@@ -41,7 +41,8 @@ export class AnthropicProvider implements LlmProvider {
   readonly configured = true;
   private client: Anthropic;
   constructor(readonly model: string, apiKey: string) {
-    this.client = new Anthropic({ apiKey, maxRetries: 2, timeout: 120_000 });
+    // Cabe no limite de 60 s das funções da Vercel (plano Hobby).
+    this.client = new Anthropic({ apiKey, maxRetries: 1, timeout: 45_000 });
   }
 
   async generate<T extends z.ZodTypeAny>(args: GenerateArgs<T>): Promise<GenerateResult<z.infer<T>>> {
