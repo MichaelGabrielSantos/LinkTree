@@ -8,12 +8,12 @@ import { EVAL_CASES, gradeCase, type CaseResult } from "../evals/cases";
 import { finalizeEvidence } from "../src/server/ai/evidence";
 import { generateGroundedAnswer } from "../src/server/ai/assistant";
 import { getProvider } from "../src/server/ai/provider";
-import { sqlClient } from "../src/server/db/client";
+import { closeDb } from "../src/server/db/client";
 
 const provider = getProvider();
 if (!provider.configured) {
   console.log("Provedor de IA não configurado (AI_PROVIDER/ANTHROPIC_API_KEY). Nenhuma métrica foi medida.");
-  await sqlClient.end();
+  await closeDb();
   process.exit(0);
 }
 const results: CaseResult[] = [];
@@ -43,4 +43,4 @@ const summary = {
 console.log(JSON.stringify({ ...summary, results: undefined }, null, 2));
 mkdirSync("evals/results", { recursive: true });
 writeFileSync(`evals/results/${summary.at.replace(/[:.]/g, "-")}.json`, JSON.stringify(summary, null, 2));
-await sqlClient.end();
+await closeDb();

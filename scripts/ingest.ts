@@ -1,4 +1,4 @@
-import { sqlClient } from "../src/server/db/client";
+import { closeDb } from "../src/server/db/client";
 import { isJobName, JOBS } from "../src/server/ingestion/jobs";
 
 const [job, ...args] = process.argv.slice(2);
@@ -15,5 +15,5 @@ try {
   console.error("Falha:", err instanceof Error ? err.message : err);
   process.exitCode = 1;
 } finally {
-  await sqlClient.end();
+  await closeDb();
 }

@@ -84,6 +84,15 @@ Agendamento recomendado:
 
 Administração: inclua seu e-mail em `ADMIN_EMAILS` **antes** de criar a conta.
 
+### Deploy na Vercel
+
+O build não precisa de banco: a conexão só abre na primeira consulta. Sem as variáveis abaixo, o deploy sobe, mas as páginas que consultam dados mostram "Falha técnica" e o log registra `DATABASE_URL não configurada`.
+
+1. Crie um Postgres com `unaccent` e `pg_trgm` (Neon e Supabase têm as duas) e defina `DATABASE_URL` em *Settings → Environment Variables* (Production e Preview). O cliente usa `prepare: false`, compatível com poolers em modo transação.
+2. Rode as migrações e a ingestão **da sua máquina** apontando para esse banco: `npm run db:migrate`, depois os comandos `ingest` acima. A carga dos arquivos anuais não cabe numa função serverless.
+3. Defina `CRON_SECRET`. Com ela definida, a Vercel envia `Authorization: Bearer <segredo>` nas chamadas de cron, que é o que `/api/cron/ingest` exige. No plano Hobby, crons rodam no máximo 1x/dia; para notícias a cada 30 min use o plano Pro ou um agendador externo.
+4. Opcional: `AI_PROVIDER=anthropic` + `ANTHROPIC_API_KEY`, e `ADMIN_EMAILS`.
+
 ### IA
 
 - `AI_PROVIDER=none` (padrão): o produto mostra os registros da fonte e diz que não há texto gerado. Nada é inventado.

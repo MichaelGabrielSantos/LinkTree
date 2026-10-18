@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { and, eq, sql } from "drizzle-orm";
-import { db, sqlClient } from "@/server/db/client";
+import { closeDb, db } from "@/server/db/client";
 import { ingestionRuns, newsArticles, newsArticleVersions, personExternalIds, persons, propositions, propositionVersions } from "@/server/db/schema";
 import { syncAgenciaBrasil } from "@/server/connectors/agencia-brasil/rss";
 import { upsertPersonByCamaraId, upsertPropositions } from "@/server/connectors/camara/jobs";
@@ -25,7 +25,7 @@ afterEach(() => {
   setProviderOverride(null);
 });
 afterAll(async () => {
-  await sqlClient.end();
+  await closeDb();
 });
 
 describe("ingestão de notícias", () => {
