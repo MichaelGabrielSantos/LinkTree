@@ -65,7 +65,7 @@ npm run db:migrate             # aplica migrações e atualiza catálogo de font
 # Ingestão (dados reais)
 npm run ingest -- deputados                     # deputados das legislaturas 57 e 56 (~35 s)
 NODE_OPTIONS=--max-old-space-size=8192 \
-  npm run ingest -- proposicoes-anuais 2026 2025 2024 2023 2022 2021 2020 2019   # ~5 min no total
+  npm run ingest -- proposicoes-anuais 2026 2025 2024 2023 2022 2021 2020 2019   # ~5 min; acrescente --so-normas para ~214 MB
 npm run ingest -- noticias                      # RSS da Agência Brasil (~5 s)
 npm run ingest -- deputado 204534               # detalhe + histórico completo de um deputado via API
 npm run ingest -- proposicao 2647228            # detalhe + tramitação de uma proposição
@@ -89,6 +89,8 @@ Administração: inclua seu e-mail em `ADMIN_EMAILS` **antes** de criar a conta.
 O build não precisa de banco: a conexão só abre na primeira consulta. Sem as variáveis abaixo, o deploy sobe, mas as páginas que consultam dados mostram "Falha técnica" e o log registra `DATABASE_URL não configurada`.
 
 1. Crie um Postgres com `unaccent` e `pg_trgm` (Neon e Supabase têm as duas) e defina `DATABASE_URL` em *Settings → Environment Variables* (Production e Preview). O cliente usa `prepare: false`, compatível com poolers em modo transação.
+   - A string do Neon pode ser colada como está: `channel_binding=require` é removido automaticamente (o driver não entende esse parâmetro).
+   - Tamanho medido: carga completa 2019–2026 ≈ **1,2 GB**; com `--so-normas` (só PL, PLP, PEC, PDL…) ≈ **214 MB**, o que cabe em planos gratuitos. Com `--so-normas`, requerimentos e emendas não entram nas contagens dos perfis.
 2. Rode as migrações e a ingestão **da sua máquina** apontando para esse banco: `npm run db:migrate`, depois os comandos `ingest` acima. A carga dos arquivos anuais não cabe numa função serverless.
 3. Defina `CRON_SECRET`. Com ela definida, a Vercel envia `Authorization: Bearer <segredo>` nas chamadas de cron, que é o que `/api/cron/ingest` exige. No plano Hobby, crons rodam no máximo 1x/dia; para notícias a cada 30 min use o plano Pro ou um agendador externo.
 4. Opcional: `AI_PROVIDER=anthropic` + `ANTHROPIC_API_KEY`, e `ADMIN_EMAILS`.

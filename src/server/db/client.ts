@@ -10,12 +10,22 @@ const globalForDb = globalThis as unknown as { __contextoSql?: postgres.Sql; __c
  * Conexão criada só no primeiro uso. Assim o `next build` (que importa as rotas para coletar
  * metadados) não exige DATABASE_URL; a falta da variável só aparece quando uma consulta é feita.
  */
+/**
+ * Remove parâmetros que só o libpq entende (ex.: `channel_binding=require` na string do Neon).
+ * O postgres.js repassaria esses parâmetros ao servidor como configuração de sessão.
+ */
+export function normalizeDatabaseUrl(raw: string): string {
+  const url = new URL(raw);
+  for (const k of ["channel_binding", "gssencmode", "target_session_attrs_libpq"]) url.searchParams.delete(k);
+  return url.toString();
+}
+
 function getDb(): Db {
   if (globalForDb.__contextoDb) return globalForDb.__contextoDb;
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL não configurada (veja .env.example).");
   // prepare: false mantém compatibilidade com poolers em modo transação (Neon, Supabase, PgBouncer).
-  const sql = postgres(url, { max: Number(process.env.DATABASE_POOL_MAX ?? 5), prepare: false, onnotice: () => {} });
+  const sql = postgres(normalizeDatabaseUrl(url), { max: Number(process.env.DATABASE_POOL_MAX ?? 5), prepare: false, onnotice: () => {} });
   globalForDb.__contextoSql = sql;
   globalForDb.__contextoDb = drizzle(sql, { schema });
   return globalForDb.__contextoDb;

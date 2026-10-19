@@ -21,9 +21,10 @@ export const JOBS = {
   /** Recomendado 1x/dia (If-Modified-Since evita reprocessar arquivos sem mudança). */
   "proposicoes-anuais": async (args: string[]) => {
     const force = args.includes("--force");
+    const onlyNorma = args.includes("--so-normas");
     const years = args.filter((a) => /^\d{4}$/.test(a)).map(Number);
     const out = [];
-    for (const y of years.length ? years : [new Date().getFullYear()]) out.push(await syncPropositionsBulk(y, { force }));
+    for (const y of years.length ? years : [new Date().getFullYear()]) out.push(await syncPropositionsBulk(y, { force, onlyNorma }));
     return out;
   },
   deputado: async (args: string[]) => {

@@ -12,7 +12,7 @@ import {
   tramitacoes,
 } from "../../db/schema";
 import { stableHash } from "@/lib/hash";
-import { classifyTramitacao } from "@/domain/legislative-stage";
+import { classifyTramitacao, NORM_PROPOSAL_TYPES } from "@/domain/legislative-stage";
 import { getCheckpoint, setCheckpoint, withRun, type RunContext } from "../../ingestion/runs";
 import {
   AutorItem,
@@ -349,8 +349,12 @@ function authorKey(depId: string | null, codTipo: number | null | undefined, nam
  * Arquivos anuais: proposições, autores (com `proponente` e `ordemAssinatura`) e temas.
  * Usa If-Modified-Since com checkpoint por arquivo — reexecutar sem mudança não toca no banco.
  */
-export async function syncPropositionsBulk(year: number, opts: { force?: boolean } = {}) {
-  return withRun(SOURCE, "camara:proposicoes-anual", { year, force: !!opts.force }, async (ctx) => {
+/**
+ * `onlyNorma`: guarda só tipos que podem virar norma (PL, PLP, PEC, PDL…), ~12% do volume.
+ * Útil para bancos pequenos; requerimentos e emendas ficam fora das contagens.
+ */
+export async function syncPropositionsBulk(year: number, opts: { force?: boolean; onlyNorma?: boolean } = {}) {
+  return withRun(SOURCE, "camara:proposicoes-anual", { year, force: !!opts.force, onlyNorma: !!opts.onlyNorma }, async (ctx) => {
     const ckKey = `camara:bulk:${year}`;
     const ck = (await getCheckpoint<Record<string, string>>(ckKey)) ?? {};
     const newCk: Record<string, string> = { ...ck };
@@ -364,7 +368,10 @@ export async function syncPropositionsBulk(year: number, opts: { force?: boolean
       const normalized: NormalizedProposition[] = [];
       for (const raw of propFile.data) {
         const p = BulkProposicao.safeParse(raw);
-        if (p.success) normalized.push(normalizeBulk(p.data));
+        if (p.success) {
+          if (opts.onlyNorma && !NORM_PROPOSAL_TYPES.has(p.data.siglaTipo.trim())) continue;
+          normalized.push(normalizeBulk(p.data));
+        }
         else ctx.errors.push(`proposição inválida no arquivo ${year}: ${p.error.issues[0]?.message}`);
       }
       idByExternal = await upsertPropositions(normalized, ctx);

@@ -122,3 +122,12 @@ describe("papéis de autoria", () => {
     expect(roleOf(true, null)).toBe("nao_verificado");
   });
 });
+
+describe("string de conexão", () => {
+  it("remove channel_binding (string do Neon) e mantém sslmode", async () => {
+    const { normalizeDatabaseUrl } = await import("@/server/db/client");
+    const out = normalizeDatabaseUrl("postgresql://u:p@ep-x.neon.tech/neondb?sslmode=require&channel_binding=require");
+    expect(out).toContain("sslmode=require");
+    expect(out).not.toContain("channel_binding");
+  });
+});
