@@ -1,4 +1,4 @@
-# Contexto
+# Imparciali
 
 > Entenda o que aconteceu, encontre a evidência e aprofunde no seu ritmo.
 
@@ -145,7 +145,7 @@ Cobertura dos critérios de aceitação (seção 13 do briefing):
   - A API devolve CPF no detalhe do deputado; **não armazenamos**.
   - O PDF do inteiro teor em `www.camara.leg.br` responde **HTTP 429 para clientes identificados como robô**. **Não contornamos o bloqueio** (não disfarçamos o user-agent). Na prática, as explicações de projetos usam só ementa e metadados, e dizem isso. Pendência: pedir à Câmara um meio oficial de coleta.
   - Os termos de uso específicos não puderam ser lidos (a página depende de JavaScript).
-- **Agência Brasil (restrita).** A política autoriza reprodução "para veículos de comunicação com fins jornalísticos, mediante indicação da fonte"; o uso comercial exige licença. Como o enquadramento do Contexto não foi confirmado, **guardamos e mostramos só o trecho inicial (≤ 600 caracteres)**, não reproduzimos imagens e removemos os pixels de rastreamento do feed. Não há feed de ciência e tecnologia.
+- **Agência Brasil (restrita).** A política autoriza reprodução "para veículos de comunicação com fins jornalísticos, mediante indicação da fonte"; o uso comercial exige licença. Como o enquadramento do Imparciali não foi confirmado, **guardamos e mostramos só o trecho inicial (≤ 600 caracteres)**, não reproduzimos imagens e removemos os pixels de rastreamento do feed. Não há feed de ciência e tecnologia.
 - **IA:** o caminho com o modelo real **não foi exercitado neste ambiente** (sem chave). O pipeline foi testado com um provedor FIXTURE determinístico. Rode `npm run eval:ai` com chave antes de produção.
 - **Senado, TSE, Portal da Transparência:** catalogados como pendentes. A disponibilidade do Senado foi verificada; a integração fica para o próximo incremento.
 

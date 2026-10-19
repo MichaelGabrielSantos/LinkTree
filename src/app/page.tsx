@@ -145,7 +145,7 @@ export default async function HojePage({ searchParams }: { searchParams: SP }) {
 
       <div className="mt-10">
         <AboutData title="Como esta página é montada">
-          <p>“Destaques” ordena por atualidade, alcance do acontecimento, relevância pública do tema e texto disponível, com ajuste para variar os temas. É uma escolha editorial do Contexto, igual para todas as pessoas — não usa seus cliques nem seu posicionamento. <Link href="/metodologia#panorama" className="underline">Ver a fórmula</Link>.</p>
+          <p>“Destaques” ordena por atualidade, alcance do acontecimento, relevância pública do tema e texto disponível, com ajuste para variar os temas. É uma escolha editorial do Imparciali, igual para todas as pessoas — não usa seus cliques nem seu posicionamento. <Link href="/metodologia#panorama" className="underline">Ver a fórmula</Link>.</p>
           <p>Notícias: Agência Brasil (apenas o trecho inicial; leia a matéria completa no original). Ciência e tecnologia ainda não têm fonte de notícias integrada.</p>
         </AboutData>
       </div>

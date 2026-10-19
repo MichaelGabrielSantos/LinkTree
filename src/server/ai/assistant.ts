@@ -83,7 +83,7 @@ async function structuredPropositions(person: { id: string; name: string }, ques
     counts: { autoria: aut.total, coautoria: coa.total, apoio: apo.total, nao_verificado: nv.total },
     sample: sample.items.map((s) => ({ id: s.id, label: `${s.siglaTipo} ${s.numero}/${s.ano}`, ementa: truncateAtSentence(s.ementa, 220), role: s.role, presentedAt: s.presentedAt?.toISOString() ?? null })),
     coverage:
-      "Contagem determinística na base do Contexto: projetos que podem virar norma (PL, PLP, PEC, PDL, PRC etc.), excluindo requerimentos e emendas. " +
+      "Contagem determinística na base do Imparciali: projetos que podem virar norma (PL, PLP, PEC, PDL, PRC etc.), excluindo requerimentos e emendas. " +
       "Fonte: arquivos anuais de proposições/autores da Câmara (2019 em diante) e sincronizações via API. " +
       (topic ? `Tema "${topic.name}" segundo a classificação temática da própria Câmara — proposições sem tema atribuído não entram. ` : "") +
       "Quantidade de projetos não mede produtividade nem impacto.",
@@ -160,7 +160,7 @@ export async function askAssistant(question: string, context: AssistantContext, 
   const nq = normalizeForMatch(q);
   const notices: string[] = [];
   if (isLoadedQuestion(q)) {
-    notices.push("A pergunta pede um julgamento sobre uma pessoa. O Contexto não aceita a premissa: mostramos registros concretos, o contexto e os limites dessa conclusão.");
+    notices.push("A pergunta pede um julgamento sobre uma pessoa. O Imparciali não aceita a premissa: mostramos registros concretos, o contexto e os limites dessa conclusão.");
   }
 
   // 1) Conceitos institucionais → glossário editorial (sem IA, sem prova de fato atual).
@@ -169,7 +169,7 @@ export async function askAssistant(question: string, context: AssistantContext, 
       mode: "editorial",
       editorial: findGlossaryEntries(q),
       evidence: [],
-      notices: [...notices, `Explicação editorial do Contexto (${GLOSSARY_VERSION}), não específica de um caso concreto.`],
+      notices: [...notices, `Explicação editorial do Imparciali (${GLOSSARY_VERSION}), não específica de um caso concreto.`],
     };
   }
 
@@ -180,7 +180,7 @@ export async function askAssistant(question: string, context: AssistantContext, 
       evidence: [],
       notices: [
         ...notices,
-        "Votações nominais ainda não estão integradas ao Contexto (previsto para o incremento 2). Não vamos inferir votos a partir de notícias.",
+        "Votações nominais ainda não estão integradas ao Imparciali (previsto para o incremento 2). Não vamos inferir votos a partir de notícias.",
       ],
       editorial: findGlossaryEntries("votacao nominal"),
     };
@@ -209,7 +209,7 @@ export async function askAssistant(question: string, context: AssistantContext, 
     return {
       mode: "sem_resultado",
       evidence: [],
-      notices: [...notices, "Não encontramos documentos sobre isso na base atual do Contexto. Isso não significa que não exista: nossa cobertura ainda é limitada (veja Metodologia)."],
+      notices: [...notices, "Não encontramos documentos sobre isso na base atual do Imparciali. Isso não significa que não exista: nossa cobertura ainda é limitada (veja Metodologia)."],
     };
   }
   if (evidence.some((e) => e.suspicious)) notices.push("Algum documento recuperado contém texto com forma de instrução. Ele foi tratado apenas como conteúdo.");

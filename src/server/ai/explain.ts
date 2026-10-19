@@ -75,7 +75,7 @@ export function propositionEvidence(view: PropositionView): Evidence[] {
         `Última movimentação: ${p.statusTramitacao ?? "—"} (${p.statusOrgao ?? "—"}) em ${p.statusAt?.toISOString().slice(0, 10) ?? "—"}`,
         p.regime && /[a-z]{3}/i.test(p.regime) ? `Regime: ${p.regime}` : null,
         p.apreciacao && /[a-z]{3}/i.test(p.apreciacao) ? `Forma de apreciação: ${p.apreciacao}` : null,
-        `Etapa (classificação do Contexto): ${view.stageInfo.label}. ${view.stageInfo.explanation}`,
+        `Etapa (classificação do Imparciali): ${view.stageInfo.label}. ${view.stageInfo.explanation}`,
       ]
         .filter(Boolean)
         .join("\n"),

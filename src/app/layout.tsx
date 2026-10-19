@@ -1,12 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import "./globals.css";
+import { Logo, LogoMark } from "@/components/logo";
 import { DesktopNav, MobileNav } from "@/components/nav";
 import { ThemeToggle, themeInitScript } from "@/components/theme-toggle";
 
 export const metadata: Metadata = {
-  title: { default: "Contexto", template: "%s · Contexto" },
-  description: "Entenda o que aconteceu, encontre a evidência e aprofunde no seu ritmo.",
+  title: { default: "Imparciali", template: "%s · Imparciali" },
+  description: "Imparcial no método. Aberto na fonte. Entenda o que aconteceu, encontre a evidência e aprofunde no seu ritmo.",
+  applicationName: "Imparciali",
+  openGraph: { siteName: "Imparciali", locale: "pt_BR", type: "website" },
 };
 
 export const viewport: Viewport = {
@@ -30,8 +33,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <header className="sticky top-0 z-20 border-b border-line bg-bg/95 backdrop-blur">
           <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-2.5">
-            <Link href="/" className="font-serif text-xl font-semibold tracking-tight text-ink">
-              Contexto
+            <Link href="/" aria-label="Imparciali — página inicial" className="shrink-0">
+              <span className="hidden sm:inline"><Logo /></span>
+              <span className="sm:hidden"><LogoMark size={30} /></span>
             </Link>
             <DesktopNav />
             <form action="/explorar" role="search" className="ml-auto flex min-w-0 flex-1 justify-end md:max-w-xs">
@@ -53,6 +57,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <footer className="mx-auto max-w-5xl border-t border-line px-4 pb-28 pt-6 text-sm text-ink-3 md:pb-10">
+          <p className="mb-3 flex items-center gap-2 text-ink-2">
+            <LogoMark size={20} /> <span className="font-medium">Imparcial no método. Aberto na fonte.</span>
+          </p>
           <p>
             Versão inicial com cobertura limitada: Câmara dos Deputados (dados abertos) e Agência Brasil (trechos de RSS). A ordenação do
             panorama é uma escolha editorial do produto, não uma verdade objetiva.

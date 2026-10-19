@@ -167,7 +167,7 @@ function ResponseView({ r, anchor, onPick }: { r: AssistantResponse; anchor: str
       {r.mode === "estruturada" && r.structured && (
         <div>
           <p className="text-base">
-            Na base do Contexto, <Link href={`/politicos/${r.structured.person.id}`} className="font-semibold underline">{r.structured.person.name}</Link> aparece em{" "}
+            Na base do Imparciali, <Link href={`/politicos/${r.structured.person.id}`} className="font-semibold underline">{r.structured.person.name}</Link> aparece em{" "}
             <strong>{r.structured.counts.autoria}</strong> projeto(s) como 1º signatário, <strong>{r.structured.counts.coautoria}</strong> como coautora/coautor
             {r.structured.counts.apoio ? <>, <strong>{r.structured.counts.apoio}</strong> com assinatura de apoio</> : null}
             {r.structured.counts.nao_verificado ? <> e <strong>{r.structured.counts.nao_verificado}</strong> com papel não verificado</> : null}

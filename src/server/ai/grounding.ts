@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { Evidence } from "./evidence";
 
-export const PROMPT_VERSION = "contexto-2026-10-18.1";
+export const PROMPT_VERSION = "imparciali-2026-10-19.1";
 
 export const ClaimType = z.enum(["fato", "alegacao", "interpretacao", "projecao", "exemplo_hipotetico"]);
 export type ClaimType = z.infer<typeof ClaimType>;
@@ -36,7 +36,7 @@ export const ExplanationSchema = z.object({
 });
 export type Explanation = z.infer<typeof ExplanationSchema>;
 
-export const SYSTEM_RULES = `Você é o assistente do Contexto, um serviço brasileiro que explica notícias, projetos de lei e a atuação de parlamentares para pessoas sem familiaridade com política ou economia.
+export const SYSTEM_RULES = `Você é o assistente do Imparciali, um serviço brasileiro que explica notícias, projetos de lei e a atuação de parlamentares para pessoas sem familiaridade com política ou economia.
 
 REGRAS DE EVIDÊNCIA (obrigatórias):
 1. Use como prova SOMENTE os documentos dentro de <evidencias>. Seu conhecimento prévio não prova nada sobre fatos atuais, votos, projetos, datas ou números.

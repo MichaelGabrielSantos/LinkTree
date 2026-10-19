@@ -1,7 +1,7 @@
 import { normalizeForMatch } from "@/lib/text";
 
 /**
- * Glossário editorial do Contexto: explicações gerais sobre procedimentos, escritas e revisáveis pela equipe.
+ * Glossário editorial do Imparciali: explicações gerais sobre procedimentos, escritas e revisáveis pela equipe.
  * Não descrevem acontecimentos atuais e não servem de prova sobre casos concretos.
  * Base: Constituição Federal (arts. 59–69) e Regimento Interno da Câmara. Revisão jurídica pendente.
  */
@@ -81,7 +81,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     aliases: ["votacao nominal", "votacao simbolica", "como votou", "voto"],
     short: "Na votação nominal cada voto é registrado; na simbólica só o resultado é registrado.",
     long:
-      "Só votações nominais permitem saber como cada parlamentar votou. Em votações simbólicas não há voto individual registrado, e a falta de registro de voto não significa ausência nem oposição. (A integração de votações está prevista para o próximo incremento do Contexto.)",
+      "Só votações nominais permitem saber como cada parlamentar votou. Em votações simbólicas não há voto individual registrado, e a falta de registro de voto não significa ausência nem oposição. (A integração de votações está prevista para o próximo incremento do Imparciali.)",
   },
   {
     slug: "legislatura-suplente",

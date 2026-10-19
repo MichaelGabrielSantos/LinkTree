@@ -21,6 +21,7 @@
   --ok-ink: #1e5a33;
   --focus: #b3541e;
   /* Cor de série única dos gráficos (validada: contraste ≥ 3:1, croma e luminosidade no tema claro). */
+  --brand-dot: #0E7C6B;
   --chart-1: #2a78d6;
   --chart-track: #eceae4;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 2px 8px rgb(0 0 0 / 0.04);
@@ -45,6 +46,7 @@
   --ok-ink: #a6dcb8;
   --focus: #f0a46b;
   /* Validada contra a superfície escura #1a1c1f. */
+  --brand-dot: #14A08A;
   --chart-1: #3987e5;
   --chart-track: #2a2d31;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.3);

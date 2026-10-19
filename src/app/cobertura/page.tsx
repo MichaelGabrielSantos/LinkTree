@@ -16,7 +16,7 @@ export default async function CoberturaPage({ searchParams }: { searchParams: Pr
   const sp = await searchParams;
   return (
     <>
-      <PageHeader title="Cobertura de cargos">O que o Contexto acompanha hoje — e o que ainda não. Não simulamos dados para cargos sem fonte integrada.</PageHeader>
+      <PageHeader title="Cobertura de cargos">O que o Imparciali acompanha hoje — e o que ainda não. Não simulamos dados para cargos sem fonte integrada.</PageHeader>
       {sp.registrado && <Notice tone="ok">Interesse registrado. Obrigado!</Notice>}
       {sp.limite && <Notice tone="warn">Muitos registros a partir desta conexão. Tente mais tarde.</Notice>}
       <div className="mt-4 space-y-3">

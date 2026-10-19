@@ -20,7 +20,7 @@ export const SOURCE_CATALOG: Array<typeof sources.$inferInsert> = [
     termsUrl: "https://dadosabertos.camara.leg.br/swagger/api.html",
     termsCheckedAt: "2026-10-18",
     termsSummary:
-      "Dados publicados como dados abertos, sem autenticação. A página de termos não pôde ser lida sem JavaScript; nenhuma licença específica foi verificada. A API retorna CPF no detalhe do deputado — o Contexto não armazena esse campo. O inteiro teor (PDF em www.camara.leg.br) respondeu HTTP 429 a clientes identificados como robô em 2026-10-18; não contornamos o bloqueio.",
+      "Dados publicados como dados abertos, sem autenticação. A página de termos não pôde ser lida sem JavaScript; nenhuma licença específica foi verificada. A API retorna CPF no detalhe do deputado — o Imparciali não armazena esse campo. O inteiro teor (PDF em www.camara.leg.br) respondeu HTTP 429 a clientes identificados como robô em 2026-10-18; não contornamos o bloqueio.",
     attribution: "Fonte: Câmara dos Deputados — Dados Abertos",
     permissions: {
       reproduceFullText: true,
@@ -48,7 +48,7 @@ export const SOURCE_CATALOG: Array<typeof sources.$inferInsert> = [
       "Política de reprodução: \"Reprodução autorizada para veículos de comunicação com fins jornalísticos, mediante indicação da fonte\". Reproduções com fins comerciais exigem contato com licenciamento@ebc.com.br. Conteúdos de parceiros podem seguir outra política.",
     attribution: "Fonte: Agência Brasil",
     permissions: {
-      // Enquadramento do Contexto como "veículo com fins jornalísticos" não verificado:
+      // Enquadramento do Imparciali como "veículo com fins jornalísticos" não verificado:
       // por cautela, exibimos e processamos apenas o trecho inicial e encaminhamos ao original.
       reproduceFullText: false,
       storeRaw: false,
@@ -58,7 +58,7 @@ export const SOURCE_CATALOG: Array<typeof sources.$inferInsert> = [
     } satisfies SourcePermissions,
     status: "restrito",
     pendingReview:
-      "Revisão jurídica: o Contexto se enquadra como veículo com fins jornalísticos? Uso comercial exige licença. Até lá: só metadados e trecho inicial.",
+      "Revisão jurídica: o Imparciali se enquadra como veículo com fins jornalísticos? Uso comercial exige licença. Até lá: só metadados e trecho inicial.",
   },
   {
     id: "senado",

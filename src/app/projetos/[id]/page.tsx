@@ -111,7 +111,7 @@ export default async function ProjetoPage({ params }: { params: Params }) {
       <div className="mt-4">
         <AboutData title="Detalhes da situação">
           <p>Situação registrada pela Câmara: <em>{p.statusSituacao ?? "não informada"}</em>{p.statusTramitacao && <> · última movimentação: {p.statusTramitacao} ({p.statusOrgao ?? "—"}) em {formatDate(p.statusAt)}</>}.</p>
-          <p>A etapa no diagrama é uma classificação automática do Contexto a partir dos códigos de tramitação. A sequência real varia por tipo de proposta e regime.{meaningful(p.apreciacao) ? ` Forma de apreciação: ${p.apreciacao}.` : ""}{meaningful(p.regime) ? ` Regime: ${p.regime}.` : ""}</p>
+          <p>A etapa no diagrama é uma classificação automática do Imparciali a partir dos códigos de tramitação. A sequência real varia por tipo de proposta e regime.{meaningful(p.apreciacao) ? ` Forma de apreciação: ${p.apreciacao}.` : ""}{meaningful(p.regime) ? ` Regime: ${p.regime}.` : ""}</p>
         </AboutData>
       </div>
 
@@ -233,7 +233,7 @@ export default async function ProjetoPage({ params }: { params: Params }) {
 
       <section aria-labelledby="votacoes">
         <SectionTitle id="votacoes">Votações</SectionTitle>
-        <Notice tone="info">Votações ainda não estão integradas ao Contexto (previsto para o próximo incremento). Para ver votações, consulte a <a className="underline" href={camaraPage} target="_blank" rel="noopener noreferrer">página da Câmara</a>.</Notice>
+        <Notice tone="info">Votações ainda não estão integradas ao Imparciali (previsto para o próximo incremento). Para ver votações, consulte a <a className="underline" href={camaraPage} target="_blank" rel="noopener noreferrer">página da Câmara</a>.</Notice>
       </section>
 
       <section aria-labelledby="registro">

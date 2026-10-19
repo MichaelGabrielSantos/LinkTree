@@ -45,7 +45,7 @@ export default async function NoticiaPage({ params }: { params: Params }) {
       <h1 className="mt-2 font-serif text-3xl leading-tight sm:text-4xl">{a.title}</h1>
       <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 text-xs text-ink-3 sm:grid-cols-3">
         <div><dt className="inline">Publicada: </dt><dd className="inline">{formatDateTime(a.publishedAt)}</dd></div>
-        <div><dt className="inline">Coletada pelo Contexto: </dt><dd className="inline">{formatDateTime(a.collectedAt)}</dd></div>
+        <div><dt className="inline">Coletada pelo Imparciali: </dt><dd className="inline">{formatDateTime(a.collectedAt)}</dd></div>
         <div><dt className="inline">Última verificação de mudança: </dt><dd className="inline">{formatDateTime(a.updatedAt)}</dd></div>
       </dl>
 

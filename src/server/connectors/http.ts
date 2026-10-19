@@ -12,7 +12,7 @@ export const ALLOWED_HOSTS = new Set([
   "cdn.tse.jus.br",
 ]);
 
-export const USER_AGENT = "ContextoBot/0.1 (+https://github.com/michaelgabrielsantos/linktree; ingestao de dados abertos)";
+export const USER_AGENT = "ImparcialiBot/0.1 (+https://github.com/michaelgabrielsantos/linktree; ingestao de dados abertos)";
 
 export class HttpError extends Error {
   constructor(message: string, readonly status: number | null, readonly url: string) {

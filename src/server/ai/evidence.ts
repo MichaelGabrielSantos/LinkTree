@@ -19,7 +19,7 @@ export type Evidence = {
   url: string | null;
   /** Data de publicação/registro na fonte (ISO). */
   date: string | null;
-  /** Quando o Contexto coletou o registro (ISO). */
+  /** Quando o Imparciali coletou o registro (ISO). */
   collectedAt: string | null;
   /** Hash/versão do registro usado. */
   versionHash: string;

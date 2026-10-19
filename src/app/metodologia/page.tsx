@@ -17,7 +17,7 @@ export default async function MetodologiaPage() {
   const [src, tps] = await Promise.all([db.select().from(sources).orderBy(asc(sources.name)), db.select().from(topics).orderBy(asc(topics.sortOrder))]);
   return (
     <>
-      <PageHeader title="Metodologia e fontes">Como o Contexto escolhe, ordena, explica e cita. Buscamos tratamento consistente entre partidos e pessoas, mas não prometemos ausência absoluta de viés.</PageHeader>
+      <PageHeader title="Metodologia e fontes">Como o Imparciali escolhe, ordena, explica e cita. Buscamos tratamento consistente entre partidos e pessoas, mas não prometemos ausência absoluta de viés.</PageHeader>
 
       <SectionTitle id="principios">Princípios</SectionTitle>
       <ul className="ml-5 list-disc space-y-1 text-ink-2">
