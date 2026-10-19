@@ -95,6 +95,12 @@ O build não precisa de banco: a conexão só abre na primeira consulta. Sem as 
 3. Defina `CRON_SECRET`. Com ela definida, a Vercel envia `Authorization: Bearer <segredo>` nas chamadas de cron, que é o que `/api/cron/ingest` exige. No plano Hobby, crons rodam no máximo 1x/dia; para notícias a cada 30 min use o plano Pro ou um agendador externo.
 4. Opcional: `AI_PROVIDER=anthropic` + `ANTHROPIC_API_KEY`, e `ADMIN_EMAILS`.
 
+### Carga e coleta pelo GitHub Actions (sem rodar nada na sua máquina)
+
+1. No repositório: *Settings → Secrets and variables → Actions → New repository secret* com nome `DATABASE_URL` e a string do banco.
+2. Aba *Actions → Carga inicial do banco → Run workflow*. Ela roda as migrações, deputados, proposições (por padrão `--so-normas`) e notícias.
+3. O workflow *Coleta agendada* passa a atualizar as notícias a cada 30 min e, uma vez por dia, deputados, seguidos e as proposições do ano. Para carga completa, crie a variável de repositório `CARGA_COMPLETA=true`.
+
 ### IA
 
 - `AI_PROVIDER=none` (padrão): o produto mostra os registros da fonte e diz que não há texto gerado. Nada é inventado.
