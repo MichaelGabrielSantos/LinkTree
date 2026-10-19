@@ -15,6 +15,7 @@ Aplicação web para pessoas brasileiras descobrirem notícias, pesquisarem assu
 | **Hoje** | Panorama geral com ordenação auditável (fórmula pública em `/metodologia`), ordem cronológica, filtros de período/tema/fonte, agrupamento de matérias sobre o mesmo acontecimento, "Seus interesses" com motivo explícito | Agência Brasil (RSS real, 11 editorias) |
 | **Explorar** | Busca global com abas Tudo / Notícias / Políticos / Projetos; filtros por aba preservados na URL; reconhecimento de identificadores ("PL 5498/2026"); desambiguação de homônimos com cargo, UF, legislatura e ID oficial | Câmara + Agência Brasil |
 | **Político** | Perfil com foto (com origem), mandatos, partidos **por período** (sem aplicar o partido atual ao passado), proposições separadas por papel (autoria / coautoria / apoiamento / não verificado), filtros por tipo e tema, relatorias (último relator) separadas de autoria, notícias que mencionam o nome (com aviso de homônimos), cobertura explícita | Câmara (API + arquivos anuais 2019–2026) |
+| **Dados financeiros** | Aba Gastos: cota parlamentar (CEAP) por mês, categoria e fornecedor, 2023 em diante. Aba Patrimônio: bens declarados ao TSE na eleição de 2022, vínculo pelo CPF (não armazenado) | Câmara (arquivos anuais da cota) + TSE |
 | **Projeto** | Identificação, ementa, etapa legislativa explicada (aprovado em comissão ≠ lei), autoria, relatoria, temas, tramitação completa com etapas classificadas, apensados, versões preservadas, link ao inteiro teor | Câmara (API, sincronização sob demanda com limite de tempo) |
 | **Notícia** | Trecho da fonte com atribuição, link ao original, linha do tempo do acontecimento, "o que mudou desde a última atualização" (diff de versões), explicações sob demanda | Agência Brasil |
 | **Explicações e assistente** | Explicar / mais simples / exemplo do cotidiano / argumentos documentados / explicar termo; chat contextual (notícia, projeto ou político) com fontes por afirmação; consultas estruturadas para contagens; glossário editorial para conceitos | Provedor de IA substituível (Anthropic) — **ver limitações** |
@@ -67,6 +68,8 @@ npm run ingest -- deputados                     # deputados das legislaturas 57 
 NODE_OPTIONS=--max-old-space-size=8192 \
   npm run ingest -- proposicoes-anuais 2026 2025 2024 2023 2022 2021 2020 2019   # ~5 min; acrescente --so-normas para ~214 MB
 npm run ingest -- noticias                      # RSS da Agência Brasil (~5 s)
+npm run ingest -- gastos 2026 2025 2024 2023       # cota parlamentar (~1 min, ~85 MB)
+npm run ingest -- patrimonio 2022                # bens declarados ao TSE (~40 s, ~2 MB)
 npm run ingest -- deputado 204534               # detalhe + histórico completo de um deputado via API
 npm run ingest -- proposicao 2647228            # detalhe + tramitação de uma proposição
 npm run ingest -- seguidos                      # atualiza deputados que alguém segue

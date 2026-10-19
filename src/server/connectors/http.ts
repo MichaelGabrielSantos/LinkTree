@@ -9,6 +9,7 @@ export const ALLOWED_HOSTS = new Set([
   "camara.leg.br",
   "agenciabrasil.ebc.com.br",
   "legis.senado.leg.br",
+  "cdn.tse.jus.br",
 ]);
 
 export const USER_AGENT = "ContextoBot/0.1 (+https://github.com/michaelgabrielsantos/linktree; ingestao de dados abertos)";

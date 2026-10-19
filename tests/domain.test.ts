@@ -131,3 +131,35 @@ describe("string de conexão", () => {
     expect(out).not.toContain("channel_binding");
   });
 });
+
+import { assetGroup, ceapCategoryLabel, parseMoney } from "@/domain/ceap";
+import { cardTitle } from "@/components/proposition-card";
+import { stageBadge } from "@/domain/legislative-stage";
+
+describe("dados financeiros", () => {
+  it("lê valores nos formatos da Câmara e do TSE", () => {
+    expect(parseMoney("333.71")).toBe(333.71);
+    expect(parseMoney("395122,26")).toBe(395122.26);
+    expect(parseMoney("1.250.000,00")).toBe(1250000);
+    expect(parseMoney("")).toBe(0);
+  });
+  it("traduz categorias e agrupa bens", () => {
+    expect(ceapCategoryLabel("COMBUSTÍVEIS E LUBRIFICANTES.")).toBe("Combustível");
+    expect(ceapCategoryLabel("CATEGORIA NOVA.")).toBe("Categoria nova");
+    expect(assetGroup("APARTAMENTO")).toBe("Imóveis");
+    expect(assetGroup("VEÍCULO AUTOMOTOR TERRESTRE: CAMINHÃO, AUTOMÓVEL, MOTO, ETC.")).toBe("Veículos");
+    expect(assetGroup("DEPÓSITO BANCÁRIO EM CONTA CORRENTE NO PAÍS")).toBe("Dinheiro e contas");
+  });
+});
+
+describe("cards de proposição", () => {
+  it("título remove só o prefixo burocrático e corta em palavra", () => {
+    expect(cardTitle("Dispõe sobre a proteção de dados.")).toBe("A proteção de dados.");
+    expect(cardTitle("a".repeat(10) + " " + "b".repeat(300), 50).endsWith("…")).toBe(true);
+  });
+  it("só norma jurídica recebe selo verde", () => {
+    expect(stageBadge("norma_juridica").tone).toBe("ok");
+    expect(stageBadge("aprovada_comissao").tone).not.toBe("ok");
+    expect(stageBadge("remetida_sancao").label).toBe("Aguardando sanção");
+  });
+});

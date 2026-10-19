@@ -203,7 +203,7 @@ export const personExternalIds = pgTable("person_external_ids", {
   personId: uuid("person_id").notNull().references(() => persons.id, { onDelete: "cascade" }),
   system: text("system", { enum: ["camara", "senado", "tse"] }).notNull(),
   externalId: text("external_id").notNull(),
-  method: text("method", { enum: ["id_oficial", "tabela_verificada"] }).notNull(),
+  method: text("method", { enum: ["id_oficial", "tabela_verificada", "cpf_oficial"] }).notNull(),
   createdAt: createdAt(),
 }, (t) => [
   primaryKey({ columns: [t.system, t.externalId] }),
@@ -435,3 +435,42 @@ export const adminAuditLog = pgTable("admin_audit_log", {
   details: jsonb("details").$type<Record<string, unknown>>().notNull().default({}),
   at: ts("at").notNull().defaultNow(),
 });
+
+// ───────────────────────── Dados financeiros ─────────────────────────
+
+/**
+ * Cota para o Exercício da Atividade Parlamentar (CEAP), agregada por mês e categoria.
+ * Fonte: arquivos anuais da Câmara (www.camara.leg.br/cotas/Ano-AAAA.csv.zip), vinculados pelo ideCadastro (ID oficial).
+ * Valores em reais: vlrLiquido (o que foi efetivamente reembolsado, já descontadas glosas).
+ */
+export const ceapMonthly = pgTable("ceap_monthly", {
+  personId: uuid("person_id").notNull().references(() => persons.id, { onDelete: "cascade" }),
+  year: integer("year").notNull(),
+  month: integer("month").notNull(),
+  category: text("category").notNull(),
+  netValue: real("net_value").notNull(),
+  documents: integer("documents").notNull(),
+}, (t) => [primaryKey({ columns: [t.personId, t.year, t.month, t.category] })]);
+
+/** Fornecedores por ano. CPF de pessoa física nunca é armazenado (só CNPJ). */
+export const ceapSuppliers = pgTable("ceap_suppliers", {
+  personId: uuid("person_id").notNull().references(() => persons.id, { onDelete: "cascade" }),
+  year: integer("year").notNull(),
+  supplierKey: text("supplier_key").notNull(),
+  supplierName: text("supplier_name").notNull(),
+  cnpj: text("cnpj"),
+  category: text("category").notNull(),
+  netValue: real("net_value").notNull(),
+  documents: integer("documents").notNull(),
+}, (t) => [primaryKey({ columns: [t.personId, t.year, t.supplierKey, t.category] }), index("ceap_suppliers_person_year_idx").on(t.personId, t.year)]);
+
+/** Bens declarados ao TSE no registro de candidatura. Vínculo pelo CPF oficial (usado só durante a carga, não armazenado). */
+export const declaredAssets = pgTable("declared_assets", {
+  personId: uuid("person_id").notNull().references(() => persons.id, { onDelete: "cascade" }),
+  electionYear: integer("election_year").notNull(),
+  candidateId: text("candidate_id").notNull(),
+  order: integer("order").notNull(),
+  assetType: text("asset_type").notNull(),
+  description: text("description"),
+  value: real("value").notNull(),
+}, (t) => [primaryKey({ columns: [t.personId, t.electionYear, t.order] })]);

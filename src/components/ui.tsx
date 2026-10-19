@@ -12,7 +12,7 @@ export function PageHeader({ eyebrow, title, children }: { eyebrow?: string; tit
 }
 
 export function Card({ children, className = "", as: As = "div" }: { children: ReactNode; className?: string; as?: "div" | "article" | "section" | "li" }) {
-  return <As className={`rounded-xl border border-line bg-surface p-4 sm:p-5 ${className}`}>{children}</As>;
+  return <As className={`rounded-2xl border border-line bg-surface p-4 shadow-card sm:p-5 ${className}`}>{children}</As>;
 }
 
 type NoticeTone = "info" | "warn" | "error" | "ok";
@@ -87,3 +87,72 @@ export const primaryButtonClass =
   "inline-flex items-center justify-center gap-1 rounded-lg bg-accent px-3 py-1.5 text-sm font-semibold text-accent-ink hover:opacity-90 disabled:opacity-50";
 export const inputClass =
   "w-full rounded-lg border border-line bg-surface px-3 py-2 text-ink placeholder:text-ink-3 focus:border-accent";
+
+/** Explicação metodológica recolhida: disponível, mas sem poluir a leitura. */
+export function AboutData({ title = "Sobre estes dados", children }: { title?: string; children: ReactNode }) {
+  return (
+    <details className="group rounded-xl bg-surface-2 px-4 py-2 text-sm text-ink-2">
+      <summary className="cursor-pointer list-none py-1 font-medium text-ink-2 marker:hidden">
+        <span aria-hidden className="mr-1 inline-block transition group-open:rotate-90">›</span>
+        {title}
+      </summary>
+      <div className="space-y-1 pb-2 pt-1">{children}</div>
+    </details>
+  );
+}
+
+export function StatTile({ label, value, hint, href }: { label: string; value: ReactNode; hint?: ReactNode; href?: string }) {
+  const inner = (
+    <>
+      <p className="text-sm text-ink-3">{label}</p>
+      <p className="mt-1 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{value}</p>
+      {hint && <p className="mt-1 text-xs text-ink-3">{hint}</p>}
+    </>
+  );
+  const cls = "block rounded-2xl border border-line bg-surface p-4 shadow-card";
+  return href ? <Link href={href} className={`${cls} hover:border-accent`}>{inner}</Link> : <div className={cls}>{inner}</div>;
+}
+
+/** Linha de opções em formato de pílulas (substitui selects para escolhas curtas). */
+export function ChipNav({ label, items }: { label: string; items: Array<{ key: string; label: ReactNode; href: string; active: boolean }> }) {
+  return (
+    <nav aria-label={label} className="no-scrollbar -mx-4 overflow-x-auto px-4">
+      <ul className="flex gap-2 pb-1">
+        {items.map((i) => (
+          <li key={i.key} className="shrink-0">
+            <Link
+              href={i.href}
+              aria-current={i.active ? "true" : undefined}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm transition ${
+                i.active ? "border-accent bg-accent font-semibold text-accent-ink" : "border-line bg-surface text-ink-2 hover:border-ink-3 hover:text-ink"
+              }`}
+            >
+              {i.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+export const TOPIC_ICON: Record<string, string> = {
+  politica: "🏛️",
+  economia: "💰",
+  brasil: "📍",
+  mundo: "🌎",
+  saude: "🩺",
+  educacao: "🎓",
+  "meio-ambiente": "🌿",
+  justica: "⚖️",
+  "direitos-humanos": "🤝",
+  "ciencia-tecnologia": "🔬",
+  cultura: "🎭",
+  esportes: "⚽",
+  agro: "🌾",
+};
+
+export function TopicIcon({ slug }: { slug: string | null | undefined }) {
+  if (!slug || !TOPIC_ICON[slug]) return null;
+  return <span aria-hidden>{TOPIC_ICON[slug]}</span>;
+}

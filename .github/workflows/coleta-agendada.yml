@@ -47,3 +47,4 @@ jobs:
           npm run ingest -- deputados
           npm run ingest -- seguidos
           npm run ingest -- proposicoes-anuais $(date -u +%Y) $FLAG
+          npm run ingest -- gastos $(date -u +%Y)

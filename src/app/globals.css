@@ -20,6 +20,10 @@
   --ok-bg: #e6f2ea;
   --ok-ink: #1e5a33;
   --focus: #b3541e;
+  /* Cor de série única dos gráficos (validada: contraste ≥ 3:1, croma e luminosidade no tema claro). */
+  --chart-1: #2a78d6;
+  --chart-track: #eceae4;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 2px 8px rgb(0 0 0 / 0.04);
 }
 
 .dark {
@@ -40,6 +44,10 @@
   --ok-bg: #173022;
   --ok-ink: #a6dcb8;
   --focus: #f0a46b;
+  /* Validada contra a superfície escura #1a1c1f. */
+  --chart-1: #3987e5;
+  --chart-track: #2a2d31;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3);
 }
 
 @theme inline {
@@ -59,6 +67,9 @@
   --color-err-ink: var(--err-ink);
   --color-ok-bg: var(--ok-bg);
   --color-ok-ink: var(--ok-ink);
+  --color-chart-1: var(--chart-1);
+  --color-chart-track: var(--chart-track);
+  --shadow-card: var(--shadow);
   --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -73,8 +84,12 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
-  line-height: 1.55;
+  font-size: 1.0625rem;
+  line-height: 1.6;
 }
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
 
 :focus-visible {
   outline: 3px solid var(--focus);

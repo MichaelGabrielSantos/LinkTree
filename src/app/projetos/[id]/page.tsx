@@ -10,8 +10,9 @@ import { isFollowing, savedIdSet } from "@/server/user-data";
 import { FollowButton, SaveButton } from "@/components/actions-ui";
 import { ExplainPanel } from "@/components/explain-panel";
 import { Assistant } from "@/components/assistant";
-import { Badge, Card, Notice, SectionTitle } from "@/components/ui";
-import { STAGE_INFO, typeGroup, type Stage, PROPOSAL_TYPE_LABEL } from "@/domain/legislative-stage";
+import { AboutData, Badge, Card, Notice, SectionTitle } from "@/components/ui";
+import { PIPELINE, STAGE_INFO, stageBadge, typeGroup, type Stage, PROPOSAL_TYPE_LABEL } from "@/domain/legislative-stage";
+import { cardTitle } from "@/components/proposition-card";
 import { ROLE_LABEL, roleOf, type AuthorRole } from "@/domain/authorship";
 import { formatDate, formatDateTime } from "@/lib/format";
 
@@ -26,14 +27,6 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return { title: v ? `${v.prop.siglaTipo} ${v.prop.numero}/${v.prop.ano}` : "Projeto" };
 }
 
-const PIPELINE: Array<{ key: string; label: string; stages: Stage[] }> = [
-  { key: "apr", label: "Apresentação", stages: ["apresentada"] },
-  { key: "com", label: "Comissões", stages: ["em_comissao", "parecer_apresentado", "aprovada_comissao", "rejeitada_comissao"] },
-  { key: "ple", label: "Plenário", stages: ["aprovada_1turno", "aprovada_plenario"] },
-  { key: "sen", label: "Outra Casa", stages: ["remetida_senado"] },
-  { key: "san", label: "Sanção ou promulgação", stages: ["remetida_sancao", "remetida_promulgacao"] },
-  { key: "lei", label: "Norma publicada", stages: ["norma_juridica"] },
-];
 
 export default async function ProjetoPage({ params }: { params: Params }) {
   const { id } = await params;
@@ -56,6 +49,8 @@ export default async function ProjetoPage({ params }: { params: Params }) {
   const unknownRole = byRole("nao_verificado");
   const terminal = ["arquivada", "retirada", "rejeitada", "prejudicada"].includes(stage);
   const currentIdx = PIPELINE.findIndex((s) => s.stages.includes(stage));
+  const baseBadge = stageBadge(stage);
+  const badge = stage === "norma_juridica" && ["PL", "PLP", "PLV", "MPV"].includes(p.siglaTipo) ? { ...baseBadge, label: "Virou lei" } : baseBadge;
   const group = typeGroup(p.siglaTipo);
   const ident = `${p.siglaTipo} ${p.numero}/${p.ano}`;
   const camaraPage = `https://www.camara.leg.br/propostas-legislativas/${p.externalId}`;
@@ -63,25 +58,44 @@ export default async function ProjetoPage({ params }: { params: Params }) {
   return (
     <article>
       <p className="text-sm text-ink-3">
-        <Link href="/explorar?aba=projetos" className="underline">Projetos</Link> / {ident}
+        <Link href="/explorar?aba=projetos" className="hover:underline">← Projetos</Link>
       </p>
-      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-        <Badge>{p.descricaoTipo ?? PROPOSAL_TYPE_LABEL[p.siglaTipo] ?? p.siglaTipo}</Badge>
-        <Badge tone={stageInfo.isLaw ? "ok" : terminal ? "warn" : "accent"}>{stageInfo.label}</Badge>
-        {group !== "norma" && <Badge tone="warn">Não é um projeto que vira lei ({PROPOSAL_TYPE_LABEL[p.siglaTipo] ?? p.siglaTipo})</Badge>}
-      </div>
-      <h1 className="mt-2 font-serif text-3xl leading-tight sm:text-4xl">{ident}</h1>
-      <p className="mt-3 text-lg text-ink">{p.ementa}</p>
-      {p.ementaDetalhada && <p className="mt-2 text-ink-2">{p.ementaDetalhada}</p>}
+      <header className="mt-3 rounded-2xl border border-line bg-surface p-5 shadow-card sm:p-7">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm font-semibold uppercase tracking-wide text-ink-3">
+            {ident} <span className="font-normal normal-case tracking-normal">· {p.descricaoTipo ?? PROPOSAL_TYPE_LABEL[p.siglaTipo] ?? p.siglaTipo}</span>
+          </p>
+          <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold ${stageInfo.isLaw ? "bg-ok-bg text-ok-ink" : terminal ? "bg-surface-2 text-ink-2" : "bg-accent-soft text-ink"}`}>
+            <span aria-hidden>{badge.icon}</span> {badge.label}
+          </span>
+        </div>
+        <h1 className="mt-3 font-serif text-2xl leading-snug sm:text-3xl">{cardTitle(p.ementa, 400)}</h1>
+        {p.ementaDetalhada && <p className="mt-3 text-ink-2">{p.ementaDetalhada}</p>}
+        {group !== "norma" && <p className="mt-3 text-sm text-warn-ink">Este é um {(PROPOSAL_TYPE_LABEL[p.siglaTipo] ?? p.siglaTipo).toLowerCase()}, não um projeto que pode virar lei.</p>}
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        <FollowButton targetType="proposition" targetId={p.id} following={following} next={`/projetos/${p.id}`} label="tramitação" />
-        <SaveButton itemType="proposition" itemId={p.id} saved={saved} next={`/projetos/${p.id}`} />
-        {p.urlInteiroTeor && (
-          <a href={p.urlInteiroTeor} target="_blank" rel="noopener noreferrer" className="inline-flex items-center rounded-lg border border-line px-3 py-1.5 text-sm font-medium hover:bg-surface-2">Texto original (PDF) ↗</a>
-        )}
-        <a href={camaraPage} target="_blank" rel="noopener noreferrer" className="inline-flex items-center rounded-lg border border-line px-3 py-1.5 text-sm font-medium hover:bg-surface-2">Página na Câmara ↗</a>
-      </div>
+        <ol className="mt-6 grid grid-cols-6 gap-1" aria-label="Etapas do processo legislativo">
+          {PIPELINE.map((st, i) => {
+            const state = terminal ? "off" : i < currentIdx ? "done" : i === currentIdx ? "now" : "off";
+            return (
+              <li key={st.key} aria-current={state === "now" ? "step" : undefined} className="min-w-0">
+                <span className={`block h-2 rounded-full ${state === "off" ? "bg-chart-track" : stageInfo.isLaw ? "bg-ok-ink" : "bg-chart-1"}`} />
+                <span className={`mt-1.5 block text-[11px] leading-tight sm:text-xs ${state === "now" ? "font-semibold text-ink" : "text-ink-3"}`}>{st.label}</span>
+              </li>
+            );
+          })}
+        </ol>
+        <p className="mt-4 text-ink"><strong>{stageInfo.label}.</strong> {stageInfo.explanation}</p>
+        {!stageInfo.isLaw && <p className="mt-1 text-sm font-medium text-ink-2">Ainda não é lei{terminal ? " — a tramitação foi encerrada." : "."}</p>}
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <FollowButton targetType="proposition" targetId={p.id} following={following} next={`/projetos/${p.id}`} label="tramitação" />
+          <SaveButton itemType="proposition" itemId={p.id} saved={saved} next={`/projetos/${p.id}`} />
+          {p.urlInteiroTeor && (
+            <a href={p.urlInteiroTeor} target="_blank" rel="noopener noreferrer" className="inline-flex items-center rounded-lg border border-line px-3 py-1.5 text-sm font-medium hover:bg-surface-2">Texto original ↗</a>
+          )}
+          <a href={camaraPage} target="_blank" rel="noopener noreferrer" className="inline-flex items-center rounded-lg border border-line px-3 py-1.5 text-sm font-medium hover:bg-surface-2">Na Câmara ↗</a>
+        </div>
+      </header>
 
       <div className="mt-4 space-y-2">
         {refresh.error && (
@@ -94,30 +108,12 @@ export default async function ProjetoPage({ params }: { params: Params }) {
         )}
       </div>
 
-      <Card className="mt-5">
-        <h2 className="font-serif text-lg">Em que etapa está</h2>
-        <ol className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-6" aria-label="Etapas do processo legislativo">
-          {PIPELINE.map((s, i) => {
-            const state = terminal ? "off" : i < currentIdx ? "done" : i === currentIdx ? "now" : "off";
-            return (
-              <li key={s.key} aria-current={state === "now" ? "step" : undefined}
-                className={`rounded-lg border px-2 py-2 ${state === "now" ? "border-accent bg-accent-soft font-semibold" : state === "done" ? "border-line bg-surface-2" : "border-dashed border-line text-ink-3"}`}>
-                {s.label}{state === "done" ? " ✓" : ""}
-              </li>
-            );
-          })}
-        </ol>
-        <p className="mt-3 text-sm"><strong>{stageInfo.label}.</strong> {stageInfo.explanation}</p>
-        <p className="mt-1 text-sm text-ink-2">
-          Situação registrada pela Câmara: <em>{p.statusSituacao ?? "não informada"}</em>
-          {p.statusTramitacao && <> · última movimentação: {p.statusTramitacao} ({p.statusOrgao ?? "—"}) em {formatDate(p.statusAt)}</>}
-        </p>
-        {!stageInfo.isLaw && <p className="mt-2 text-sm font-medium text-ink">Esta proposta não é lei. {terminal ? "A tramitação foi encerrada nesta etapa." : "Ainda depende das etapas seguintes."}</p>}
-        <p className="mt-2 text-xs text-ink-3">
-          A posição no diagrama é uma classificação automática do Contexto a partir dos códigos de tramitação da Câmara. A sequência real varia por tipo de proposta e regime.
-          {meaningful(p.apreciacao) ? ` Forma de apreciação: ${p.apreciacao}.` : ""}{meaningful(p.regime) ? ` Regime: ${p.regime}.` : ""}
-        </p>
-      </Card>
+      <div className="mt-4">
+        <AboutData title="Detalhes da situação">
+          <p>Situação registrada pela Câmara: <em>{p.statusSituacao ?? "não informada"}</em>{p.statusTramitacao && <> · última movimentação: {p.statusTramitacao} ({p.statusOrgao ?? "—"}) em {formatDate(p.statusAt)}</>}.</p>
+          <p>A etapa no diagrama é uma classificação automática do Contexto a partir dos códigos de tramitação. A sequência real varia por tipo de proposta e regime.{meaningful(p.apreciacao) ? ` Forma de apreciação: ${p.apreciacao}.` : ""}{meaningful(p.regime) ? ` Regime: ${p.regime}.` : ""}</p>
+        </AboutData>
+      </div>
 
       <section aria-labelledby="autores">
         <SectionTitle id="autores">Autoria</SectionTitle>

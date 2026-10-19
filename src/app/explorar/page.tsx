@@ -5,8 +5,9 @@ import { db } from "@/server/db/client";
 import { topics } from "@/server/db/schema";
 import { needsDisambiguation, searchNews, searchPersons, searchPropositions, type PersonHit } from "@/server/queries/search";
 import { Assistant } from "@/components/assistant";
-import { Badge, Card, EmptyState, Notice, PageHeader, SectionTitle, Tabs } from "@/components/ui";
-import { formatDate, relativeTime } from "@/lib/format";
+import { Card, Notice, PageHeader, SectionTitle, Tabs, TOPIC_ICON, TopicIcon } from "@/components/ui";
+import { PropositionGrid } from "@/components/proposition-card";
+import { relativeTime } from "@/lib/format";
 import { truncateAtSentence } from "@/lib/text";
 
 export const metadata: Metadata = { title: "Explorar" };
@@ -19,14 +20,14 @@ const isQuestion = (q: string) => /\?\s*$/.test(q) || /^(o que|qual|quais|como|p
 function PersonRow({ p }: { p: PersonHit }) {
   return (
     <li>
-      <Card>
+      <Card className="relative h-full hover:border-ink-3">
         <div className="flex items-center gap-3">
           {p.photoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={p.photoUrl} alt="" width={48} height={64} className="h-16 w-12 rounded border border-line object-cover" />
           )}
           <div className="min-w-0">
-            <Link href={`/politicos/${p.id}`} className="font-semibold underline">{p.name}</Link>
+            <Link href={`/politicos/${p.id}`} className="font-serif text-lg font-semibold after:absolute after:inset-0 after:content-['']">{p.name}</Link>
             <p className="text-xs text-ink-3">
               {p.mandates.length ? p.mandates.map((m) => `Deputado(a) federal · ${m.uf} · ${m.legislature}ª leg. (${m.startDate?.slice(0, 4)}–${m.endDate?.slice(0, 4)})`).join(" | ") : "Sem mandato sincronizado"}
             </p>
@@ -68,8 +69,9 @@ export default async function ExplorarPage({ searchParams }: { searchParams: SP 
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {topicRows.map((t) => (
             <li key={t.slug}>
-              <Link href={`/temas/${t.slug}`} className="block rounded-lg border border-line bg-surface p-3 hover:bg-surface-2">
-                <span className="font-semibold">{t.name}</span>
+              <Link href={`/temas/${t.slug}`} className="block h-full rounded-2xl border border-line bg-surface p-4 shadow-card hover:border-ink-3">
+                <span className="block text-2xl" aria-hidden>{TOPIC_ICON[t.slug]}</span>
+                <span className="mt-1 block font-semibold">{t.name}</span>
                 <span className="mt-0.5 block text-xs text-ink-3">{t.description}</span>
               </Link>
             </li>
@@ -163,16 +165,7 @@ export default async function ExplorarPage({ searchParams }: { searchParams: SP 
         <section aria-labelledby="r-proj">
           <SectionTitle id="r-proj" aside={aba === "tudo" && props.length ? <Link className="underline" href={href({ aba: "projetos" })}>ver todos</Link> : undefined}>Projetos</SectionTitle>
           {props.length === 0 ? <p className="text-sm text-ink-2">Nenhuma proposição encontrada na base (Câmara, 2019–2026 e sincronizações). Isso não significa que não exista.</p> : (
-            <ul className="space-y-2">
-              {props.map((p) => (
-                <li key={p.id}>
-                  <Card>
-                    <p className="text-xs text-ink-3">{formatDate(p.presentedAt)}{p.statusSituacao ? ` · ${p.statusSituacao}` : ""}</p>
-                    <p className="mt-1"><Link href={`/projetos/${p.id}`} className="font-semibold underline">{p.siglaTipo} {p.numero}/{p.ano}</Link> — {truncateAtSentence(p.ementa, 260)}</p>
-                  </Card>
-                </li>
-              ))}
-            </ul>
+            <PropositionGrid items={props} />
           )}
         </section>
       )}
@@ -181,14 +174,14 @@ export default async function ExplorarPage({ searchParams }: { searchParams: SP 
         <section aria-labelledby="r-not">
           <SectionTitle id="r-not" aside={aba === "tudo" && news.length ? <Link className="underline" href={href({ aba: "noticias" })}>ver todas</Link> : undefined}>Notícias</SectionTitle>
           {news.length === 0 ? <p className="text-sm text-ink-2">Nenhuma notícia encontrada nas matérias coletadas (Agência Brasil).</p> : (
-            <ul className="space-y-2">
+            <ul className="grid gap-3 sm:grid-cols-2">
               {news.map((n) => (
                 <li key={n.id}>
-                  <Card>
-                    <p className="text-xs text-ink-3">{relativeTime(n.publishedAt)} · Agência Brasil {n.topicSlug && <Badge>{topicRows.find((t) => t.slug === n.topicSlug)?.name}</Badge>}</p>
-                    <p className="mt-1"><Link href={`/noticias/${n.id}`} className="font-semibold underline">{n.title}</Link></p>
-                    <p className="mt-1 text-sm text-ink-2">{truncateAtSentence(n.lead, 200)}</p>
-                  </Card>
+                  <Link href={`/noticias/${n.id}`} className="block h-full rounded-2xl border border-line bg-surface p-4 shadow-card hover:border-ink-3">
+                    <p className="text-xs text-ink-3"><TopicIcon slug={n.topicSlug} /> {topicRows.find((t) => t.slug === n.topicSlug)?.name} · {relativeTime(n.publishedAt)}</p>
+                    <p className="mt-1 font-serif text-lg leading-snug text-ink">{n.title}</p>
+                    <p className="mt-1 line-clamp-2 text-sm text-ink-2">{truncateAtSentence(n.lead, 200)}</p>
+                  </Link>
                 </li>
               ))}
             </ul>

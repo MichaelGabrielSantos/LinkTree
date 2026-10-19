@@ -34,8 +34,13 @@ export function SaveButton({ itemType, itemId, saved, next }: { itemType: "news"
       <input type="hidden" name="itemId" value={itemId} />
       <input type="hidden" name="intent" value={saved ? "unsave" : "save"} />
       <input type="hidden" name="next" value={next} />
-      <button type="submit" className={buttonClass} aria-pressed={saved}>
-        {saved ? "✓ Salvo" : "Salvar"}
+      <button
+        type="submit"
+        aria-pressed={saved}
+        aria-label={saved ? "Remover dos salvos" : "Salvar"}
+        className={`rounded-lg px-2.5 py-1 text-sm font-medium hover:bg-surface-2 ${saved ? "text-ink" : "text-ink-2"}`}
+      >
+        {saved ? "★ Salvo" : "☆ Salvar"}
       </button>
     </form>
   );

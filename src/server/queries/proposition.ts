@@ -53,3 +53,27 @@ export async function refreshPropositionIfStale(prop: { externalId: string; sour
 export async function findPropositionByExternal(sourceId: string, externalId: string) {
   return db.query.propositions.findFirst({ where: and(eq(propositions.sourceId, sourceId), eq(propositions.externalId, externalId)) });
 }
+
+/**
+ * Movimentações relevantes recentes no Congresso (projetos que podem virar norma):
+ * transformação em norma, envio à sanção, aprovações e envio ao Senado. Ordenado pela data do status.
+ */
+export async function congressHighlights(days = 21, limit = 6) {
+  const rows = await db.execute<{
+    id: string; sigla_tipo: string; numero: number; ano: number; ementa: string; presented_at: string | null;
+    status_situacao: string | null; status_tramitacao: string | null; status_orgao: string | null; status_at: string | null;
+  }>(sql`
+    select id, sigla_tipo, numero, ano, ementa, presented_at, status_situacao, status_tramitacao, status_orgao, status_at
+    from propositions
+    where sigla_tipo in ('PL','PLP','PEC','PDL','MPV','PLV')
+      and status_at >= now() - make_interval(days => ${days}) and status_at <= now()
+      and (status_situacao ilike '%norma jur%' or status_situacao ilike '%sanção%' or status_situacao ilike '%senado%'
+           or status_tramitacao ilike 'aprovação%' or status_tramitacao ilike 'remessa%')
+    order by (status_situacao ilike '%norma jur%') desc, status_at desc
+    limit ${limit}`);
+  return rows.map((r) => ({
+    id: r.id, siglaTipo: r.sigla_tipo, numero: Number(r.numero), ano: Number(r.ano), ementa: r.ementa,
+    presentedAt: r.presented_at ? new Date(r.presented_at) : null, statusSituacao: r.status_situacao,
+    statusTramitacao: r.status_tramitacao, statusOrgao: r.status_orgao, statusAt: r.status_at ? new Date(r.status_at) : null,
+  }));
+}

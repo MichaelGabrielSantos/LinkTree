@@ -9,6 +9,7 @@ import {
   syncPropositionDetail,
   syncPropositionsBulk,
 } from "../connectors/camara/jobs";
+import { syncCeap, syncDeclaredAssets } from "../connectors/financeiro";
 
 /** Anos cobertos pelos arquivos anuais por padrão: legislaturas 56 e 57. */
 export const DEFAULT_BULK_YEARS = [2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
@@ -26,6 +27,20 @@ export const JOBS = {
     const out = [];
     for (const y of years.length ? years : [new Date().getFullYear()]) out.push(await syncPropositionsBulk(y, { force, onlyNorma }));
     return out;
+  },
+  /** Gastos da cota parlamentar (CEAP). Recomendado 1x/dia para o ano corrente. */
+  gastos: async (args: string[]) => {
+    const force = args.includes("--force");
+    const years = args.filter((a) => /^\d{4}$/.test(a)).map(Number);
+    const out = [];
+    for (const y of years.length ? years : [new Date().getFullYear()]) out.push(await syncCeap(y, { force }));
+    return out;
+  },
+  /** Patrimônio declarado ao TSE (eleição de 2022 = 57ª legislatura). */
+  patrimonio: async (args: string[]) => {
+    const year = Number(args.find((a) => /^\d{4}$/.test(a)) ?? 2022);
+    const cpfYears = year === 2022 ? [2023, 2024, 2025, new Date().getFullYear()] : [year + 1, year + 2];
+    return [await syncDeclaredAssets(year, [...new Set(cpfYears)])];
   },
   deputado: async (args: string[]) => {
     const id = args[0];

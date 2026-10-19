@@ -146,3 +146,35 @@ export function typeGroup(sigla: string): "norma" | "requerimento" | "emenda_par
   if (["EMC", "EMP", "EMA", "EMS", "SBT", "SBE", "PRL", "PAR", "PPP", "DTQ", "ESB", "EMR"].includes(sigla)) return "emenda_parecer";
   return "outro";
 }
+
+/** Etapas simplificadas para a barra de progresso dos cards e da página do projeto. */
+export const PIPELINE: Array<{ key: string; label: string; stages: Stage[] }> = [
+  { key: "apr", label: "Apresentação", stages: ["apresentada"] },
+  { key: "com", label: "Comissões", stages: ["em_comissao", "parecer_apresentado", "aprovada_comissao", "rejeitada_comissao", "outra", "desarquivada"] },
+  { key: "ple", label: "Plenário", stages: ["aprovada_1turno", "aprovada_plenario"] },
+  { key: "sen", label: "Outra Casa", stages: ["remetida_senado"] },
+  { key: "san", label: "Sanção ou promulgação", stages: ["remetida_sancao", "remetida_promulgacao"] },
+  { key: "lei", label: "Virou norma", stages: ["norma_juridica"] },
+];
+
+export const TERMINAL_STAGES: Stage[] = ["arquivada", "retirada", "rejeitada", "prejudicada"];
+
+export function pipelineIndex(stage: Stage): number {
+  return PIPELINE.findIndex((p) => p.stages.includes(stage));
+}
+
+/** Rótulo curto e tom visual para cards. O tom sempre acompanha texto + ícone (nunca só cor). */
+export function stageBadge(stage: Stage): { label: string; tone: "ok" | "neutral" | "accent"; icon: string } {
+  if (stage === "norma_juridica") return { label: "Virou norma", tone: "ok", icon: "✓" };
+  if (stage === "arquivada") return { label: "Arquivado", tone: "neutral", icon: "■" };
+  if (stage === "retirada") return { label: "Retirado pelo autor", tone: "neutral", icon: "■" };
+  if (stage === "rejeitada") return { label: "Rejeitado", tone: "neutral", icon: "■" };
+  if (stage === "prejudicada") return { label: "Prejudicado", tone: "neutral", icon: "■" };
+  if (stage === "remetida_senado") return { label: "No Senado", tone: "accent", icon: "●" };
+  if (stage === "remetida_sancao") return { label: "Aguardando sanção", tone: "accent", icon: "●" };
+  if (stage === "remetida_promulgacao") return { label: "Aguardando promulgação", tone: "accent", icon: "●" };
+  if (stage === "aprovada_plenario" || stage === "aprovada_1turno") return { label: "Aprovado no plenário", tone: "accent", icon: "●" };
+  if (stage === "aprovada_comissao") return { label: "Aprovado em comissão", tone: "accent", icon: "●" };
+  if (stage === "apresentada") return { label: "Recém-apresentado", tone: "accent", icon: "●" };
+  return { label: "Em análise", tone: "accent", icon: "●" };
+}

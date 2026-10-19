@@ -31,3 +31,20 @@ export function relativeTime(d: Date | string, now = new Date()): string {
 export function plural(n: number, one: string, many: string) {
   return `${n.toLocaleString("pt-BR")} ${n === 1 ? one : many}`;
 }
+
+const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+const BRL_CENTS = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
+export function formatBRL(v: number, cents = false): string {
+  return (cents ? BRL_CENTS : BRL).format(v);
+}
+
+/** R$ 1,2 mi · R$ 530 mil · R$ 950 */
+export function formatBRLCompact(v: number): string {
+  const abs = Math.abs(v);
+  if (abs >= 1_000_000) return `R$ ${(v / 1_000_000).toLocaleString("pt-BR", { maximumFractionDigits: 1 })} mi`;
+  if (abs >= 1_000) return `R$ ${(v / 1_000).toLocaleString("pt-BR", { maximumFractionDigits: 0 })} mil`;
+  return BRL.format(v);
+}
+
+export const MONTHS_SHORT = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];

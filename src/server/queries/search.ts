@@ -32,6 +32,8 @@ export type PropositionHit = {
   ano: number;
   ementa: string;
   statusSituacao: string | null;
+  statusTramitacao: string | null;
+  statusOrgao: string | null;
   presentedAt: Date | null;
   rank: number;
 };
@@ -121,7 +123,7 @@ export async function searchPropositions(q: string, filters: PropositionFilters 
   const whereSql = sql.join(where, sql` and `);
   if (ident) {
     const rows = await db.execute<RawProp>(sql`
-      select p.id, p.external_id, p.sigla_tipo, p.numero, p.ano, p.ementa, p.status_situacao, p.presented_at, 1.0 as rank
+      select p.id, p.external_id, p.sigla_tipo, p.numero, p.ano, p.ementa, p.status_situacao, p.status_tramitacao, p.status_orgao, p.presented_at, 1.0 as rank
       from propositions p
       where p.sigla_tipo = ${ident.siglaTipo} and p.numero = ${ident.numero} and p.ano = ${ident.ano}
       limit 5`);
@@ -134,7 +136,7 @@ export async function searchPropositions(q: string, filters: PropositionFilters 
   const tq = any ? sql`to_tsquery('portuguese', ${any})` : sql`websearch_to_tsquery('portuguese', immutable_unaccent(${term}))`;
   const rows = await db.execute<RawProp>(sql`
     with q as (select ${tq} as tq)
-    select p.id, p.external_id, p.sigla_tipo, p.numero, p.ano, p.ementa, p.status_situacao, p.presented_at,
+    select p.id, p.external_id, p.sigla_tipo, p.numero, p.ano, p.ementa, p.status_situacao, p.status_tramitacao, p.status_orgao, p.presented_at,
       ts_rank_cd(p.search_vector, q.tq) * (case when p.sigla_tipo in ('PL','PLP','PEC','PDL','MPV') then 1.5 else 1 end) as rank
     from propositions p, q
     where p.search_vector @@ q.tq and ${whereSql}
@@ -151,6 +153,8 @@ type RawProp = {
   ano: number;
   ementa: string;
   status_situacao: string | null;
+  status_tramitacao: string | null;
+  status_orgao: string | null;
   presented_at: string | Date | null;
   rank: number;
 };
@@ -163,6 +167,8 @@ const mapProp = (r: RawProp): PropositionHit => ({
   ano: Number(r.ano),
   ementa: r.ementa,
   statusSituacao: r.status_situacao,
+  statusTramitacao: r.status_tramitacao,
+  statusOrgao: r.status_orgao,
   presentedAt: r.presented_at ? new Date(r.presented_at) : null,
   rank: Number(r.rank),
 });

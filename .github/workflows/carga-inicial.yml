@@ -53,3 +53,7 @@ jobs:
         run: npm run ingest -- proposicoes-anuais $ANOS $FLAG
       - name: Notícias (Agência Brasil)
         run: npm run ingest -- noticias
+      - name: Gastos da cota parlamentar (2023 em diante)
+        run: npm run ingest -- gastos 2026 2025 2024 2023
+      - name: Patrimônio declarado ao TSE (eleição de 2022)
+        run: npm run ingest -- patrimonio 2022

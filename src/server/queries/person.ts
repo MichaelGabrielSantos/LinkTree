@@ -18,6 +18,8 @@ export type PersonProposition = {
   ementa: string;
   presentedAt: Date | null;
   statusSituacao: string | null;
+  statusTramitacao: string | null;
+  statusOrgao: string | null;
   role: AuthorRole;
   signatureOrder: number | null;
 };
@@ -61,6 +63,8 @@ export type PersonPropositionFilter = {
   group?: "norma" | "requerimento" | "emenda_parecer" | "todos";
   codTemas?: number[];
   ano?: number;
+  /** Só proposições cuja situação registra transformação em norma jurídica. */
+  onlyLaw?: boolean;
   limit?: number;
   offset?: number;
 };
@@ -78,6 +82,7 @@ function filterSql(f: PersonPropositionFilter) {
     f.group && f.group !== "todos" ? sql`p.sigla_tipo in ${groupSiglas(f.group)}` : sql`true`,
     f.codTemas?.length ? sql`exists (select 1 from proposition_themes t where t.proposition_id = p.id and t.cod_tema in ${f.codTemas})` : sql`true`,
     f.ano ? sql`p.ano = ${f.ano}` : sql`true`,
+    f.onlyLaw ? sql`(p.status_situacao ilike '%norma jur%' or p.status_situacao ilike 'transformad%')` : sql`true`,
   ];
   return sql.join(parts, sql` and `);
 }
@@ -87,9 +92,9 @@ export async function personPropositions(personId: string, f: PersonPropositionF
   const [rows, count] = await Promise.all([
     db.execute<{
       id: string; external_id: string; sigla_tipo: string; numero: number; ano: number; ementa: string;
-      presented_at: string | null; status_situacao: string | null; proponent: boolean | null; signature_order: number | null;
+      presented_at: string | null; status_situacao: string | null; status_tramitacao: string | null; status_orgao: string | null; proponent: boolean | null; signature_order: number | null;
     }>(sql`
-      select p.id, p.external_id, p.sigla_tipo, p.numero, p.ano, p.ementa, p.presented_at, p.status_situacao, pa.proponent, pa.signature_order
+      select p.id, p.external_id, p.sigla_tipo, p.numero, p.ano, p.ementa, p.presented_at, p.status_situacao, p.status_tramitacao, p.status_orgao, pa.proponent, pa.signature_order
       from proposition_authors pa join propositions p on p.id = pa.proposition_id
       where pa.person_id = ${personId} and ${where}
       order by p.presented_at desc nulls last, p.numero desc
@@ -109,6 +114,8 @@ export async function personPropositions(personId: string, f: PersonPropositionF
       ementa: r.ementa,
       presentedAt: r.presented_at ? new Date(r.presented_at) : null,
       statusSituacao: r.status_situacao,
+      statusTramitacao: r.status_tramitacao,
+      statusOrgao: r.status_orgao,
       role: roleOf(r.proponent, r.signature_order),
       signatureOrder: r.signature_order,
     })),
